@@ -29,11 +29,11 @@
 <main>
 	<div>
 		<h3>Расшифрованное сообщение: </h3>
-		<textarea oninput="encrypt()" id="message" rows="5">абвгд</textarea>
+		<textarea oninput="crypt('message', alphabet, shiftedAlphabet, 'cipher')" id="message" rows="5">абвгд</textarea>
 	</div>
 	<div>
 		<h3>Зашифрованное сообщение: </h3>
-		<textarea oninput="decrypt()" id="cipher" rows="5"></textarea>
+		<textarea oninput="crypt('cipher', shiftedAlphabet, alphabet, 'message')" id="cipher" rows="5"></textarea>
 	</div>
 </main>
 
@@ -53,35 +53,20 @@ function shiftAlphabet(shift) {
 	return shiftedAlphabet;
 }
 
-function encrypt() {
-	let encryptedMessage = '';
-	message = document.getElementById('message').value;
+function crypt(source, currentAlphabet, neededAlphabet, output) {
+	let cryptedMessage = '';
+	message = document.getElementById(source).value;
 	for (let i = 0; i < message.length; i++) {
 		let letter = message[i];
-		let letterIndex = alphabet.indexOf(letter.toLowerCase());
-
-		if (letterIndex > -1) encryptedMessage += shiftedAlphabet[letterIndex];
-		else encryptedMessage += letter;
+		let letterIndex = currentAlphabet.indexOf(letter.toLowerCase());
+		cryptedMessage += (letterIndex > -1) ? neededAlphabet[letterIndex] : letter;
 	}
-	document.getElementById('cipher').value = encryptedMessage;
-}
-
-function decrypt() {
-	let decryptedMessage = '';
-	message = document.getElementById('cipher').value;
-	for (let i = 0; i < message.length; i++) {
-		let letter = message[i];
-		let letterIndex = shiftedAlphabet.indexOf(message[i].toLowerCase());
-
-		if (letterIndex > -1) decryptedMessage += alphabet[letterIndex];
-		else decryptedMessage += letter;
-	}
-	document.getElementById('message').value = decryptedMessage;
+	document.getElementById(output).value = cryptedMessage;
 }
 
 console.log('Алфавит               — ' + alphabet);
 console.log('Алфавит со сдвигом ' + shift + '  — ' + shiftedAlphabet);
-encrypt();
+crypt('message', alphabet, shiftedAlphabet, 'cipher');
 </script>
 </body>
 </html>
