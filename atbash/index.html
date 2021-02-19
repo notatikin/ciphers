@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Атбаш</title>
+	<style>
+		* {
+			font-family: sans-serif;
+			font-weight: normal;
+			box-sizing: border-box;
+		}
+		body {
+			max-width: 768px;
+		}
+		main {
+			display: grid;
+			grid-template-columns: repeat(2, 1fr);
+			grid-gap: 2em;
+		}
+		textarea {
+			width: 100%;
+			padding: 1em;
+		}
+	</style>
+</head>
+<body>
+<h1>Атбаш</h1>
+<hr>
+<main>
+	<div>
+		<h3>Расшифрованное сообщение</h3>
+		<textarea id="source-text" cols="34" rows="5">абвгд</textarea>
+	</div>
+	<div>
+		<h3>Зашифрованное сообщение</h3>
+		<textarea id="cipher-text" cols="34" rows="5" readonly></textarea>
+	</div>
+</main>
+
+<script>
+	let alphabet = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя'.split('');
+	let sourceTextInput = document.getElementById('source-text');
+	let cipherTextInput = document.getElementById('cipher-text');
+	
+	function crypt() {
+		let sourceText = sourceTextInput.value, cipherText = '';
+
+		for (let i = 0; i < sourceText.length; i++) {
+			let letter = sourceText[i];
+			let letterIndex = alphabet.indexOf(letter.toLowerCase());
+			if (letterIndex > -1) cipherText += alphabet[alphabet.length - 1 - letterIndex];
+			else cipherText += letter;
+		}
+
+		cipherTextInput.value = cipherText;
+	}
+
+	sourceTextInput.addEventListener('input', crypt);
+	crypt();
+</script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Цезарь</title>
+	<style>
+		* {
+			font-family: sans-serif;
+			font-weight: normal;
+			box-sizing: border-box;
+		}
+		body {
+			max-width: 768px;
+		}
+		main {
+			display: grid;
+			grid-template-columns: repeat(2, 1fr);
+			grid-gap: 2em;
+		}
+		textarea {
+			width: 100%;
+			padding: 1em;
+		}
+	</style>
+</head>
+<body>
+<h1>Цезарь</h1>
+<hr>
+<main>
+	<div>
+		<h3>Расшифрованное сообщение: </h3>
+		<textarea oninput="encrypt()" id="message" rows="5">абвгд</textarea>
+	</div>
+	<div>
+		<h3>Зашифрованное сообщение: </h3>
+		<textarea oninput="decrypt()" id="cipher" rows="5"></textarea>
+	</div>
+</main>
+
+<script>
+const shift = 7;
+const alphabet = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя';
+const shiftedAlphabet = shiftAlphabet(shift);
+let message;
+
+//функция, сдвигающая алфавит на количество букв shift
+function shiftAlphabet(shift) {
+	let shiftedAlphabet = ''; //новый алфавит 
+	for (let i = 0; i < alphabet.length; i++) {
+		currentLetter = (alphabet[i + shift] === undefined) ? (alphabet[i + shift - alphabet.length]) : (alphabet[i + shift]); //Текущая буква со сдвигом, если выходим за рамки длины алфавита - берем с начала алфавита
+		shiftedAlphabet += currentLetter;
+	}
+	return shiftedAlphabet;
+}
+
+function encrypt() {
+	let encryptedMessage = '';
+	message = document.getElementById('message').value;
+	for (let i = 0; i < message.length; i++) {
+		let letter = message[i];
+		let letterIndex = alphabet.indexOf(letter.toLowerCase());
+
+		if (letterIndex > -1) encryptedMessage += shiftedAlphabet[letterIndex];
+		else encryptedMessage += letter;
+	}
+	document.getElementById('cipher').value = encryptedMessage;
+}
+
+function decrypt() {
+	let decryptedMessage = '';
+	message = document.getElementById('cipher').value;
+	for (let i = 0; i < message.length; i++) {
+		let letter = message[i];
+		let letterIndex = shiftedAlphabet.indexOf(message[i].toLowerCase());
+
+		if (letterIndex > -1) decryptedMessage += alphabet[letterIndex];
+		else decryptedMessage += letter;
+	}
+	document.getElementById('message').value = decryptedMessage;
+}
+
+console.log('Алфавит               — ' + alphabet);
+console.log('Алфавит со сдвигом ' + shift + '  — ' + shiftedAlphabet);
+encrypt();
+</script>
+</body>
+</html>
