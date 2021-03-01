@@ -61,7 +61,7 @@ function crypt(source, currentAlphabet, neededAlphabet, output) {
 		let letterIndex = currentAlphabet.indexOf(letter.toLowerCase());
 		cryptedMessage += (letterIndex > -1) ? neededAlphabet[letterIndex] : letter;
 	}
-	document.getElementById(output).value = cryptedMessage;
+	document.getElementById(output).value = cryptedMessage.split('').reverse().join('');
 }
 
 console.log('Алфавит               — ' + alphabet);
