@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Вставки</title>
+	<style>
+		* {
+			font-family: sans-serif;
+			font-weight: normal;
+			box-sizing: border-box;
+		}
+		body {
+			max-width: 768px;
+		}
+		main {
+			display: grid;
+			grid-template-columns: repeat(2, 1fr);
+			grid-gap: 2em;
+		}
+		textarea {
+			width: 100%;
+			padding: 1em;
+		}
+	</style>
+</head>
+<body>
+<h1>Вставки</h1>
+<hr>
+<main>
+	<div>
+		<h3>Расшифрованное сообщение: </h3>
+		<textarea id="source-message" rows="5"></textarea>
+	</div>
+	<div>
+		<h3>Зашифрованное сообщение: </h3>
+		<textarea id="cipher-message" rows="5"></textarea>
+	</div>
+</main>
+
+<script>
+let alphabet = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя',
+    sourceInput = document.getElementById('source-message'),
+    cipherInput = document.getElementById('cipher-message'),
+    letterId = 0,
+    message = '',
+    letter = '';
+
+sourceInput.oninput = () => {
+	let encryptedMessage = '';
+	message = sourceInput.value;
+
+	for (const letter of message) {
+		letterId = alphabet.indexOf(letter.toLowerCase());
+		encryptedMessage += (++letterId > 0) ? (letter + generateInsertion(letterId)) : letter;
+	}
+	    
+	cipherInput.value = encryptedMessage;
+}
+
+cipherInput.oninput = () => {
+	let decryptedMessage = '';
+	message = cipherInput.value;
+
+	for (let i = 0; i < message.length; i++) {
+		letter = message[i];
+		letterId = alphabet.indexOf(letter.toLowerCase());
+		decryptedMessage += letter;
+		if (++letterId > 0) i += letterId;
+	}
+
+	sourceInput.value = decryptedMessage;
+}
+
+function generateInsertion(i) {
+	let insertion = '';
+	while (insertion.length < i) insertion += alphabet[Math.floor(Math.random() * Math.floor(alphabet.length))];
+	return insertion;
+}
+
+</script>
+</body>
+</html>
