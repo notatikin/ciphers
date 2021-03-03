@@ -29,33 +29,38 @@
 <main>
 	<div>
 		<h3>Исходное сообщение</h3>
-		<textarea id="source-text" cols="34" rows="5">абвгд</textarea>
+		<textarea id="source-text" cols="34" rows="5"></textarea>
 	</div>
 	<div>
-		<h3>Преобразованное сообщение</h3>
+		<h3>Зашифрованное сообщение</h3>
 		<textarea id="cipher-text" cols="34" rows="5" readonly></textarea>
 	</div>
 </main>
 
 <script>
-	let alphabet = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя'.split('');
-	let sourceTextInput = document.getElementById('source-text');
-	let cipherTextInput = document.getElementById('cipher-text');
+	let numberAlphabet = '0123456789',
+	    letterAlphabet = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя',
+	    sourceInput = document.getElementById('source-text'),
+	    cipherInput = document.getElementById('cipher-text');
 	
 	function crypt() {
-		let sourceText = sourceTextInput.value, cipherText = '';
+		let source = sourceInput.value,
+		    cipher = '';
 
-		for (let i = 0; i < sourceText.length; i++) {
-			let letter = sourceText[i];
-			let letterIndex = alphabet.indexOf(letter.toLowerCase());
-			cipherText += (letterIndex > -1) ? alphabet[alphabet.length - 1 - letterIndex] : letter;
+		for (let i = 0; i < source.length; i++) {
+			if (isNaN(parseInt(source[i]))) constructMessage(letterAlphabet, source[i]);
+			else constructMessage(numberAlphabet, source[i]);
 		}
 
-		cipherTextInput.value = cipherText;
+		function constructMessage(alphabet, char) {
+			let charId = alphabet.indexOf(char.toLowerCase());
+			cipher += (charId > -1) ? alphabet[alphabet.length - 1 - charId] : char;
+		}
+
+		cipherInput.value = cipher;
 	}
 
-	sourceTextInput.addEventListener('input', crypt);
-	crypt();
+	sourceInput.addEventListener('input', crypt);
 </script>
 </body>
 </html>
