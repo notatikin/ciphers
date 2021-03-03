@@ -34,7 +34,7 @@
 	</div>
 	<div>
 		<h3>Исходное сообщение</h3>
-		<textarea id="source-message" rows="5"></textarea>
+		<textarea id="source-message" rows="5" autofocus></textarea>
 	</div>
 	<div>
 		<h3>Зашифрованное сообщение</h3>
@@ -61,12 +61,12 @@ sourceInput.oninput = () => {
 		encryptedMessage += (++letterId > 0) ? (letter + generateInsertion(letterId * key)) : letter;
 	}
 	    
-	cipherInput.value = encryptedMessage;
+	cipherInput.value = generateInsertion(key) + encryptedMessage;
 }
 
 cipherInput.oninput = () => {
 	let decryptedMessage = '';
-	message = cipherInput.value;
+	message = cipherInput.value.slice(key);
 
 	for (let i = 0; i < message.length; i++) {
 		letter = message[i];
