@@ -25,14 +25,19 @@
 </head>
 <body>
 <h1>Вставки</h1>
+
 <hr>
 <main>
+	<div style="grid-column: span 2">
+		<h3>Ключ</h3>
+		<input id="key" type="number" value="3" min="1">
+	</div>
 	<div>
-		<h3>Расшифрованное сообщение: </h3>
+		<h3>Исходное сообщение</h3>
 		<textarea id="source-message" rows="5"></textarea>
 	</div>
 	<div>
-		<h3>Зашифрованное сообщение: </h3>
+		<h3>Зашифрованное сообщение</h3>
 		<textarea id="cipher-message" rows="5"></textarea>
 	</div>
 </main>
@@ -41,6 +46,8 @@
 let alphabet = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя',
     sourceInput = document.getElementById('source-message'),
     cipherInput = document.getElementById('cipher-message'),
+    keyInput = document.getElementById('key'),
+    key = keyInput.value,
     letterId = 0,
     message = '',
     letter = '';
@@ -51,7 +58,7 @@ sourceInput.oninput = () => {
 
 	for (const letter of message) {
 		letterId = alphabet.indexOf(letter.toLowerCase());
-		encryptedMessage += (++letterId > 0) ? (letter + generateInsertion(letterId)) : letter;
+		encryptedMessage += (++letterId > 0) ? (letter + generateInsertion(letterId * key)) : letter;
 	}
 	    
 	cipherInput.value = encryptedMessage;
@@ -65,10 +72,15 @@ cipherInput.oninput = () => {
 		letter = message[i];
 		letterId = alphabet.indexOf(letter.toLowerCase());
 		decryptedMessage += letter;
-		if (++letterId > 0) i += letterId;
+		if (++letterId > 0) i += letterId * key;
 	}
 
 	sourceInput.value = decryptedMessage;
+}
+
+keyInput.onchange = () => {
+	key = keyInput.value;
+	sourceInput.value = cipherInput.value = '';
 }
 
 function generateInsertion(i) {
