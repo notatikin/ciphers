@@ -52,7 +52,7 @@ let alphabet = 'абвгдеёжзийклмнопрстуфхцчшщъыьэю
     message = '',
     letter = '';
 
-sourceInput.oninput = () => {
+function encrypt() {
 	let encryptedMessage = '';
 	message = sourceInput.value;
 
@@ -64,7 +64,7 @@ sourceInput.oninput = () => {
 	cipherInput.value = generateInsertion(key) + encryptedMessage;
 }
 
-cipherInput.oninput = () => {
+function decrypt() {
 	let decryptedMessage = '';
 	message = cipherInput.value.slice(key);
 
@@ -78,16 +78,19 @@ cipherInput.oninput = () => {
 	sourceInput.value = decryptedMessage;
 }
 
-keyInput.onchange = () => {
-	key = keyInput.value;
-	sourceInput.value = cipherInput.value = '';
-}
-
 function generateInsertion(i) {
 	let insertion = '';
 	while (insertion.length < i) insertion += alphabet[Math.floor(Math.random() * Math.floor(alphabet.length))];
 	return insertion;
 }
+
+keyInput.onchange = () => {
+	key = keyInput.value;
+	if (sourceInput.value != '') encrypt();
+}
+
+sourceInput.addEventListener('input', encrypt);
+cipherInput.addEventListener('input', decrypt);
 
 </script>
 </body>
