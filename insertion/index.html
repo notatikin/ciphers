@@ -38,14 +38,19 @@
 	</div>
 	<div>
 		<h3>Зашифрованное сообщение</h3>
-		<textarea id="cipher-message" rows="5"></textarea>
+		<textarea id="crypt-message" rows="5"></textarea>
+	</div>
+	<div>
+		<h3>Разшифрованное сообщение</h3>
+		<textarea id="decrypt-message" rows="5"></textarea>
 	</div>
 </main>
 
 <script>
-let alphabet = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя',
+let alphabet = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя0123456789',
     sourceInput = document.getElementById('source-message'),
-    cipherInput = document.getElementById('cipher-message'),
+    cryptInput = document.getElementById('crypt-message'),
+    decryptInput = document.getElementById('decrypt-message'),
     keyInput = document.getElementById('key'),
     key = keyInput.value,
     letterId = 0,
@@ -61,12 +66,13 @@ function encrypt() {
 		encryptedMessage += (++letterId > 0) ? (letter + generateInsertion(letterId * key)) : letter;
 	}
 	    
-	cipherInput.value = generateInsertion(key) + encryptedMessage;
+	cryptInput.value = generateInsertion(key) + encryptedMessage;
+	decrypt();
 }
 
 function decrypt() {
 	let decryptedMessage = '';
-	message = cipherInput.value.slice(key);
+	message = cryptInput.value.slice(key);
 
 	for (let i = 0; i < message.length; i++) {
 		letter = message[i];
@@ -75,7 +81,7 @@ function decrypt() {
 		if (++letterId > 0) i += letterId * key;
 	}
 
-	sourceInput.value = decryptedMessage;
+	decryptInput.value = decryptedMessage;
 }
 
 function generateInsertion(i) {
@@ -90,7 +96,7 @@ keyInput.onchange = () => {
 }
 
 sourceInput.addEventListener('input', encrypt);
-cipherInput.addEventListener('input', decrypt);
+cryptInput.addEventListener('input', decrypt);
 
 </script>
 </body>
