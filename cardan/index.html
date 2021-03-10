@@ -3,45 +3,45 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Кардано</title>
-	<style type="text/css">
-		* {
-			font-family: sans-serif;
-			font-weight: normal;
-			box-sizing: border-box;
-		}
+	<style>
+	* {
+		font-family: sans-serif;
+		font-weight: normal;
+		box-sizing: border-box;
+	}
 
-		body {
-			max-width: 768px;
-		}
+	body {
+		max-width: 768px;
+	}
 
-		h3 {
-			margin: 0;
-		}
+	h3 {
+		margin: 0;
+	}
 
-		textarea,
-		.coded-message,
-		.decode-message {
-			width: 100%;
-			padding: 1em;
-			margin-top: 1em;
-			border: 1px solid black;
-			overflow-x: auto;
-		}
+	textarea,
+	.coded-message,
+	.decode-message {
+		width: 100%;
+		padding: 1em;
+		margin-top: 1em;
+		border: 1px solid black;
+		overflow-x: auto;
+	}
 
-		.hide-noise {
-			background: black;
-		}
+	.hide-noise {
+		background: black;
+	}
 
-		.hide-noise span {
-			background: white;
-		}
+	.hide-noise span {
+		background: white;
+	}
 
-		.form-group {
-			margin-top: 2em;
-		}
+	.form-group {
+		margin-top: 2em;
+	}
 	</style>
 </head>
-	<body>
+<body>
 	<main>
 		<h1>Кардано</h1>
 		<hr>
@@ -63,7 +63,7 @@
 		<div class="coded-message"><h3>Зашифрованное сообщение</h3></div>
 		<div class="decode-message"><h3>Разшифрованное сообщение</h3></div>
 	</main>
-	<script type="text/javascript">
+	<script>
 	let messageInput = document.querySelector('.message'),
 		codedMessage = document.querySelector('.coded-message'),
 		decodedMessage = document.querySelector('.decode-message'),
