@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Кардано + вставки</title>
+	<style>
+		html {
+			font-family: sans-serif;
+		}
+		body {
+			margin: 0 1rem;
+		}
+		main {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			column-gap: 1rem;
+		}
+		textarea {
+			width: 100%;
+		}
+	</style>
+</head>
+<body>
+	<h1>Кардано + вставки</h1>
+	<hr>
+	<main>
+		<section>
+			<label><h2>Исходное сообщение</h2></label>
+			<textarea id="encrypt-text" rows="7"></textarea>
+			<button id="encrypt-btn">Зашифровать</button>
+		</section>
+		<section>
+			<label><h2>Зашифрованное сообщение</h2></label>
+			<textarea id="decrypt-text" rows="7"></textarea>
+			<button id="decrypt-btn">Разшифровать</button>
+		</section>
+	</main>
+	<script>
+	const alphabet = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя0123456789';
+	const insertionKey = 2;
+	const encryptTextArea = document.getElementById('encrypt-text');
+	const decryptTextArea = document.getElementById('decrypt-text');
+	const encryptBtn = document.getElementById('encrypt-btn');
+	const decryptBtn = document.getElementById('decrypt-btn');
+	const size = 6;
+	const grid = [[1, 0, 0, 0, 1, 0],
+	              [0, 0, 0, 0, 1, 0],
+	              [0, 1, 0, 0, 0, 0],
+	              [0, 1, 1, 0, 0, 1],
+	              [1, 0, 0, 0, 0, 0],
+	              [0, 0, 0, 1, 0, 0]];
+
+	function encrypt(Str, out) {
+		// ———————————————————————————————— Вставки —————————————————————————————————————
+		let insertionEncrypt = '', charId = 0;
+
+		for (const char of Str) {
+			charId = alphabet.indexOf(char.toLowerCase());
+			insertionEncrypt += (++charId > 0) ? (char + generateInsertion(charId * insertionKey)) : char;
+		}
+
+		Str = generateInsertion(insertionKey) + insertionEncrypt;
+		// ———————————————————————————————— Кардано —————————————————————————————————————
+		let str = Array.from(Str), strSize = str.length; out.value = '';
+
+		for (; strSize < size * size; strSize++)
+			Str += alphabet[Math.floor(Math.random() * Math.floor(alphabet.length))]
+
+		str = Array.from(Str);
+
+		// Прямой обход
+		let c = 0, outp = new Array(size);
+		for (let i = 0; i < outp.length; i++)
+			outp[i] = new Array(size);
+
+		for (let i = 0; i < size; i++) {
+			for (let j = 0; j < size; j++) {
+				if (grid[i][j] == 1) {
+					outp[i][j] = str[c];
+					c++;
+				}
+			}
+		}
+		// поворот решетки на 90 градусов по часовой стрелке
+		for (let i = 0; i < size; i++) {
+			for (let j = 0; j < size; j++) {
+				if (grid[size - j - 1][i] == 1) {
+					outp[i][j] = str[c];
+					c++;
+				}
+			}
+		}
+		// поворот решетки на 180 градусов по часовой стрелке
+		for (let i = 0; i < size; i++) {
+			for (let j = 0; j < size; j++) {
+				if (grid[size - i - 1][size - j - 1] == 1) {
+					outp[i][j] = str[c];
+					c++;
+				}
+			}
+		}
+		// поворот решетки на 270 градусов по часовой стрелке
+		for (let i = 0; i < size; i++) {
+			for (let j = 0; j < size; j++) {
+				if (grid[j][size - i - 1] == 1) {
+					outp[i][j] = str[c];
+					c++;
+				}
+			}
+		}
+
+		for (let i = 0; i < size; i++) {
+			for (let j = 0; j < size; j++) {
+				out.value += outp[i][j];
+			}
+		}
+	}
+
+	function decrypt(Str, out) {
+		// ———————————————————————————————— Кардано —————————————————————————————————————
+		let str = Array.from(Str), cardanoStr = ''; out.value = '';
+		// Прямой обход
+		for (let i = 0; i < size; i++) {
+			for (let j = 0; j < size; j++) {
+				if (grid[i][j] == 1) {
+					cardanoStr += str[i*size+j];
+				}
+			}
+		}
+		// поворот решетки на 90 градусов по часовой стрелке
+		for (let i = 0; i < size; i++) {
+			for (let j = 0; j < size; j++) {
+				if (grid[size - j - 1][i] == 1) {
+					cardanoStr += str[i*size+j];
+				}
+			}
+		}
+		// поворот решетки на 180 градусов по часовой стрелке
+		for (let i = 0; i < size; i++) {
+			for (let j = 0; j < size; j++) {
+				if (grid[size - i - 1][size - j - 1] == 1) {
+					cardanoStr += str[i*size+j];
+				}
+			}
+		}
+		// поворот решетки на 270 градусов по часовой стрелке
+		for (let i = 0; i < size; i++) {
+			for (let j = 0; j < size; j++) {
+				if (grid[j][size - i - 1] == 1) {
+					cardanoStr += str[i*size+j];
+				}
+			}
+		}
+		// ———————————————————————————————— Вставки —————————————————————————————————————
+		let insertionDecrypt = '', charId = 0;
+		str = cardanoStr.slice(insertionKey);
+
+		for (let i = 0; i < str.length; i++) {
+			let char = str[i];
+			charId = alphabet.indexOf(char.toLowerCase());
+			insertionDecrypt += char;
+			if (++charId > 0) i += charId * insertionKey;
+		}
+
+		out.value = insertionDecrypt;
+	}
+
+	function generateInsertion(i) {
+		let insertion = '';
+		while (insertion.length < i) 
+			insertion += alphabet[Math.floor(Math.random() * Math.floor(alphabet.length))];
+		return insertion;
+	}
+
+	encryptBtn.addEventListener('click', function(){encrypt(encryptTextArea.value, decryptTextArea)});
+	decryptBtn.addEventListener('click', function(){decrypt(decryptTextArea.value, encryptTextArea)});
+	</script>
+</body>
+</html>
+</html>
