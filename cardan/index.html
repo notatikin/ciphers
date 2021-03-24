@@ -4,129 +4,149 @@
 	<meta charset="UTF-8">
 	<title>Кардано</title>
 	<style>
-	* {
-		font-family: sans-serif;
-		font-weight: normal;
-		box-sizing: border-box;
-	}
-
-	body {
-		max-width: 768px;
-	}
-
-	h3 {
-		margin: 0;
-	}
-
-	textarea,
-	.coded-message,
-	.decode-message {
-		width: 100%;
-		padding: 1em;
-		margin-top: 1em;
-		border: 1px solid black;
-		overflow-x: auto;
-	}
-
-	.hide-noise {
-		background: black;
-	}
-
-	.hide-noise span {
-		background: white;
-	}
-
-	.form-group {
-		margin-top: 2em;
-	}
+		html {
+			font-family: sans-serif;
+		}
+		body {
+			margin: 0 1rem;
+		}
+		main {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			column-gap: 1rem;
+		}
+		textarea {
+			width: 100%;
+		}
 	</style>
 </head>
 <body>
+	<h1>Кардано</h1>
+	<hr>
 	<main>
-		<h1>Кардано</h1>
-		<hr>
-		<form>
-			<div class="form-group">
-				<label for="message"><h3>Исходное сообщение</h3></label>
-				<textarea id="message" class="message" rows="3" required></textarea>
-			</div>
-			<div class="form-group">
-				<label for=""><h3>Какой-нибудь текст</h3></label>
-				<textarea id="#noise" class="noise" rows="5">Устал и истощился вечер Ты спишь, беспечен, вычислив количество овечек Город — как пирамидка из колечек Каждый человечек в нём наполовинку искалечен Молчит диспетчер, пуст автоответчик И не стоит свеч игра в «любит — не любит», в «чёт и нечет» Одни долечиваются, либо они далече У других девиз: «Дивиться нечему, делиться нечем» Пока родители кутят и тратят Знай, тебя укладывает спать популярный писатель Но тебе на эти статусы плевать, ведь Пока тебя впечатляет найденный оловянный солдатик Где-то лунатик крутит радио Оттуда голос мэра призывает взять и покарать их Кого конкретно — без понятия В городе казни, власть и плутократия переплетаются в объятиях Утомлённые днём Мы поём колыбельные для тёмных времён Что ещё остаётся нам? Смысл бороться? Сила тьмы восстаёт со дна Спи спокойно, район Мы поём колыбельные для тёмных времён Чем ещё заниматься тут? Сопротивляться глупо, мрак — водолаз да спрут Утомлённые днём Мы поём колыбельные для тёмных времён Что ещё остаётся нам? Смысл бороться? Сила тьмы восстаёт со дна
-				</textarea>
-			</div>
-			<div class="form-group">
-				<button type="button" class="toggle" class="btn">Показать/скрыть решетку</button>
-				<button type="button" class="decode" class="btn">Расшифровать</button>
-			</div>
-		</form>
-		<div class="coded-message"><h3>Зашифрованное сообщение</h3></div>
-		<div class="decode-message"><h3>Разшифрованное сообщение</h3></div>
+		<section>
+			<label><h2>Исходное сообщение</h2></label>
+			<textarea id="encrypt-text" rows="7"></textarea>
+			<button id="encrypt-btn">Зашифровать</button>
+		</section>
+		<section>
+			<label><h2>Зашифрованное сообщение</h2></label>
+			<textarea id="decrypt-text" rows="7"></textarea>
+			<button id="decrypt-btn">Разшифровать</button>
+		</section>
 	</main>
 	<script>
-	let messageInput = document.querySelector('.message'),
-		codedMessage = document.querySelector('.coded-message'),
-		decodedMessage = document.querySelector('.decode-message'),
-		toggle = document.querySelector('.toggle'),
-		decode = document.querySelector('.decode');
+	const alphabet = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя0123456789'
+	const encryptTextArea = document.getElementById('encrypt-text');
+	const decryptTextArea = document.getElementById('decrypt-text');
+	const encryptBtn = document.getElementById('encrypt-btn');
+	const decryptBtn = document.getElementById('decrypt-btn');
+	const size = 6;
+	const grid = [[1, 0, 0, 0, 1, 0],
+	              [0, 0, 0, 0, 1, 0],
+	              [0, 1, 0, 0, 0, 0],
+	              [0, 1, 1, 0, 0, 1],
+	              [1, 0, 0, 0, 0, 0],
+	              [0, 0, 0, 1, 0, 0]];
 
-	function encodeMessage (message, noise) {
-		// строки разбиваются по словам и помещаются в массивы
-		let noiseArray = noise.toLowerCase().split(' ');
-		let messageArray = message.toLowerCase().split(' ');
-		// оборачиваем каждое секретное слово в тег
-		messageArray.forEach(function (val, i, messageArray) {
-			messageArray[i] = '<span>' + val + '</span>';
-		});
-		// Инициализировать массив для хранения случайных индексов
-		// для замены словами из секретного сообщения
-		let spotsToSwap = [];
-		while (spotsToSwap.length < messageArray.length) {
-			let secretSpot = randomNum(noiseArray.length);
-			let found = false;
-			for (let i = 0; i < spotsToSwap.length; i++) {
-				if (spotsToSwap[i] === secretSpot) {
-					found = true;
-					break;
+	function encrypt(Str, out) {
+		let str = Array.from(Str);
+		let strSize = str.length;
+
+		out.value = '';
+
+		for (; strSize < size * size; strSize++)
+			Str += alphabet[Math.floor(Math.random() * Math.floor(alphabet.length))]
+
+		str = Array.from(Str);
+
+		// Прямой обход
+		let c = 0, outp = new Array(size);
+		for (let i = 0; i < outp.length; i++)
+			outp[i] = new Array(size);
+
+		for (let i = 0; i < size; i++) {
+			for (let j = 0; j < size; j++) {
+				if (grid[i][j] == 1) {
+					outp[i][j] = str[c];
+					c++;
 				}
 			}
-			if (!found) {
-				spotsToSwap[spotsToSwap.length] = secretSpot;
+		}
+		// поворот решетки на 90 градусов по часовой стрелке
+		for (let i = 0; i < size; i++) {
+			for (let j = 0; j < size; j++) {
+				if (grid[size - j - 1][i] == 1) {
+					outp[i][j] = str[c];
+					c++;
+				}
 			}
 		}
-		// Сортируем индексы в порядке возрастания, чтобы
-		// секретное сообщение читалось правильно
-		spotsToSwap.sort(sortAscending);
-		spotsToSwap.forEach(function (val, i) {
-			// Заменяем слова в секретных местах
-			// словами из секретного сообщения
-			noiseArray[val] = messageArray[i];
-		});
-		let codedMessage = noiseArray.join(' ');
-		return codedMessage;
+		// поворот решетки на 180 градусов по часовой стрелке
+		for (let i = 0; i < size; i++) {
+			for (let j = 0; j < size; j++) {
+				if (grid[size - i - 1][size - j - 1] == 1) {
+					outp[i][j] = str[c];
+					c++;
+				}
+			}
+		}
+		// поворот решетки на 270 градусов по часовой стрелке
+		for (let i = 0; i < size; i++) {
+			for (let j = 0; j < size; j++) {
+				if (grid[j][size - i - 1] == 1) {
+					outp[i][j] = str[c];
+					c++;
+				}
+			}
+		}
+
+		for (let i = 0; i < size; i++) {
+			for (let j = 0; j < size; j++) {
+				out.value += outp[i][j];
+			}
+		}
 	}
 
-	function randomNum (max) {
-		return Math.ceil(Math.random() * max);
+	function decrypt(Str, out) {
+		let str = Array.from(Str);
+		out.value = '';
+		// Прямой обход
+		for (let i = 0; i < size; i++) {
+			for (let j = 0; j < size; j++) {
+				if (grid[i][j] == 1) {
+					out.value += str[i*size+j];
+				}
+			}
+		}
+		// поворот решетки на 90 градусов по часовой стрелке
+		for (let i = 0; i < size; i++) {
+			for (let j = 0; j < size; j++) {
+				if (grid[size - j - 1][i] == 1) {
+					out.value += str[i*size+j];
+				}
+			}
+		}
+		// поворот решетки на 180 градусов по часовой стрелке
+		for (let i = 0; i < size; i++) {
+			for (let j = 0; j < size; j++) {
+				if (grid[size - i - 1][size - j - 1] == 1) {
+					out.value += str[i*size+j];
+				}
+			}
+		}
+		// поворот решетки на 270 градусов по часовой стрелке
+		for (let i = 0; i < size; i++) {
+			for (let j = 0; j < size; j++) {
+				if (grid[j][size - i - 1] == 1) {
+					out.value += str[i*size+j];
+				}
+			}
+		}
 	}
 
-	function sortAscending (a, b) {
-		return a - b;
-	}
-
-	messageInput.addEventListener('input', () => {
-		let noise = document.querySelector('.noise').value;
-		let message = document.querySelector('.message').value;
-		codedMessage.innerHTML = encodeMessage(message, noise);
-	});
-
-	toggle.addEventListener('click', () => codedMessage.classList.toggle('hide-noise'));
-	
-	decode.addEventListener('click', () => {
-		decodedMessage.innerHTML = '';
-		let spans = document.getElementsByTagName('span');
-		for (let i = 0; i < spans.length; i++) decodedMessage.innerHTML += spans[i].textContent + ' ';
-	})
+	encryptBtn.addEventListener('click', function(){encrypt(encryptTextArea.value, decryptTextArea)});
+	decryptBtn.addEventListener('click', function(){decrypt(decryptTextArea.value, encryptTextArea)});
 	</script>
 </body>
 </html>
