@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Сеть фейстеля</title>
+	<style>
+		html {
+			font-family: sans-serif;
+		}
+		body {
+			margin: 0 1rem;
+		}
+		main {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			column-gap: 1rem;
+		}
+		textarea {
+			width: 100%;
+		}
+	</style>
+</head>
+<body>
+	<h1>Сеть фейстеля</h1>
+	<hr>
+	<main>
+		<section>
+			<label><h2>Исходное сообщение</h2></label>
+			<textarea id="encrypt-text" rows="7">Текст сообщения</textarea>
+			<button id="encrypt-btn">Зашифровать</button>
+		</section>
+		<section>
+			<label><h2>Зашифрованное сообщение</h2></label>
+			<textarea id="decrypt-text" rows="7"></textarea>
+			<button id="decrypt-btn">Разшифровать</button>
+		</section>
+	</main>
+	<script>
+	const encryptTextArea = document.getElementById('encrypt-text');
+	const decryptTextArea = document.getElementById('decrypt-text');
+	const encryptBtn = document.getElementById('encrypt-btn');
+	const decryptBtn = document.getElementById('decrypt-btn');
+	
+	let key = [123, 876, 228], 
+	    rounds = 3,
+	    temp = '',
+	    n = 0; 
+
+	function F(c) {
+		return c.charCodeAt() % 6 + key[n];
+	}
+
+	function encrypt(str, out) {
+		if (str.length == 0) return;
+		else if (str.length % 2 != 0) str += ' ';
+
+		let L = str.substring(0, str.length / 2),
+		    R = str.substring(str.length / 2, str.length);
+
+		    for (n = 0; n < rounds; n++) {
+		    	temp = '';
+		    	for (let i = 0; i < R.length; i++) {
+		    		temp += String.fromCharCode(R[i].charCodeAt() ^ F(L[i]));
+		    	}
+		    	R = L;
+		    	L = temp;
+		    }
+
+		out.value = L + R;
+	}
+
+	function decrypt(str, out) {
+		let L = str.substring(0, str.length / 2),
+		    R = str.substring(str.length / 2, str.length);
+
+		    for (n = rounds - 1; n >= 0; n--) {
+		    	temp = '';
+		    	for (let i = 0; i < L.length; i++) {
+		    		temp += String.fromCharCode(L[i].charCodeAt() ^ F(R[i]));
+		    	}
+		    	L = R;
+		    	R = temp;
+		    }
+
+		out.value = L + R;
+	}
+
+	encryptBtn.addEventListener('click', function(){encrypt(encryptTextArea.value, decryptTextArea)});
+	decryptBtn.addEventListener('click', function(){decrypt(decryptTextArea.value, encryptTextArea)});
+	</script>
+</body>
+</html>
+</html>
