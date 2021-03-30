@@ -17,6 +17,7 @@
 		}
 		textarea {
 			width: 100%;
+			border: 1px solid black;
 		}
 	</style>
 </head>
@@ -41,48 +42,61 @@
 	const encryptBtn = document.getElementById('encrypt-btn');
 	const decryptBtn = document.getElementById('decrypt-btn');
 	
-	let key = [123, 876, 228], 
-	    rounds = 3,
-	    temp = '',
+	let key = [123, 876, 28628, 654, 78074, 72, 726, 5723], 
+	    rounds = 8,
+	    temp1 = '',
+	    temp2 = '',
 	    n = 0; 
 
 	function F(c) {
-		return c.charCodeAt() % 6 + key[n];
+		return c.charCodeAt() % 23 + key[n];
 	}
 
 	function encrypt(str, out) {
 		if (str.length == 0) return;
+		else if (str.length == 1) str += '   ';
 		else if (str.length % 2 != 0) str += ' ';
+		else if (str.length % 4 != 0) str += '  ';
+		
+		let s1 = str.substring(0, str.length / 4),
+			s2 = str.substring(str.length / 4, str.length / 2),
+			s3 = str.substring(str.length / 2, str.length - str.length / 4),
+			s4 = str.substring(str.length - str.length / 4, str.length);
+			
+			for (n = 0; n < rounds; n++) {
+				temp1 = '', temp2 = '';
+				for (let i = 0; i < s1.length; i++) {
+					temp1 += String.fromCharCode(s1[i].charCodeAt() ^ F(s3[i]));
+					temp2 += String.fromCharCode(s2[i].charCodeAt() ^ F(s4[i]));
+				}
+				s1 = s3;
+				s3 = temp1;
+				s2 = s4;
+				s4 = temp2;
+			}
 
-		let L = str.substring(0, str.length / 2),
-		    R = str.substring(str.length / 2, str.length);
-
-		    for (n = 0; n < rounds; n++) {
-		    	temp = '';
-		    	for (let i = 0; i < R.length; i++) {
-		    		temp += String.fromCharCode(R[i].charCodeAt() ^ F(L[i]));
-		    	}
-		    	R = L;
-		    	L = temp;
-		    }
-
-		out.value = L + R;
+		out.value = s1 + s2 + s3 + s4;
 	}
 
 	function decrypt(str, out) {
-		let L = str.substring(0, str.length / 2),
-		    R = str.substring(str.length / 2, str.length);
+		let s1 = str.substring(0, str.length / 4),
+			s2 = str.substring(str.length / 4, str.length / 2),
+			s3 = str.substring(str.length / 2, str.length - str.length / 4),
+			s4 = str.substring(str.length - str.length / 4, str.length);
 
-		    for (n = rounds - 1; n >= 0; n--) {
-		    	temp = '';
-		    	for (let i = 0; i < L.length; i++) {
-		    		temp += String.fromCharCode(L[i].charCodeAt() ^ F(R[i]));
-		    	}
-		    	L = R;
-		    	R = temp;
-		    }
-
-		out.value = L + R;
+			for (n = rounds - 1; n >= 0; n--) {
+				temp1 = '', temp2 = '';
+				for (let i = 0; i < s3.length; i++) {
+					temp1 += String.fromCharCode(s3[i].charCodeAt() ^ F(s1[i]));
+					temp2 += String.fromCharCode(s4[i].charCodeAt() ^ F(s2[i]));
+				}
+				s3 = s1;
+				s1 = temp1;
+				s4 = s2;
+				s2 = temp2;
+			}
+			
+		out.value = s1 + s2 + s3 + s4;
 	}
 
 	encryptBtn.addEventListener('click', function(){encrypt(encryptTextArea.value, decryptTextArea)});
