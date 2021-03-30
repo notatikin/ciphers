@@ -27,12 +27,12 @@
 	<main>
 		<section>
 			<label><h2>Исходное сообщение</h2></label>
-			<textarea id="encrypt-text" rows="7">Текст сообщения</textarea>
+			<textarea id="encrypt-text" rows="7" required>Текст сообщения</textarea>
 			<button id="encrypt-btn">Зашифровать</button>
 		</section>
 		<section>
 			<label><h2>Зашифрованное сообщение</h2></label>
-			<textarea id="decrypt-text" rows="7"></textarea>
+			<textarea id="decrypt-text" rows="7" required></textarea>
 			<button id="decrypt-btn">Разшифровать</button>
 		</section>
 	</main>
@@ -53,10 +53,7 @@
 	}
 
 	function encrypt(str, out) {
-		if (str.length == 0) return;
-		else if (str.length == 1) str += '   ';
-		else if (str.length % 2 != 0) str += ' ';
-		else if (str.length % 4 != 0) str += '  ';
+		while(str.length % 4 != 0) str += ' ';
 		
 		let s1 = str.substring(0, str.length / 4),
 			s2 = str.substring(str.length / 4, str.length / 2),
